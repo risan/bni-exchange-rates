@@ -1,18 +1,7 @@
-const { existsSync, readFileSync, writeFileSync } = require('fs');
-const { join } = require('path');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const CACHE_PAGE = join(__dirname, 'cache', 'page.html');
-
-const getPage = async (clearCache = false) => {
-  if (!clearCache && existsSync(CACHE_PAGE)) {
-    return {
-      fromCache: true,
-      page: readFileSync(CACHE_PAGE),
-    };
-  }
-
+const getPage = async () => {
   const response = await axios.request({
     method: 'get',
     url: 'https://bni.co.id/en-us/home/forexinformation',
@@ -24,12 +13,7 @@ const getPage = async (clearCache = false) => {
     },
   });
 
-  writeFileSync(CACHE_PAGE, response.data);
-
-  return {
-    fromCache: false,
-    page: response.data,
-  };
+  return response.data;
 };
 
 const parseNumber = val => {
@@ -62,12 +46,11 @@ const parseSection = ($, id) => {
 
 module.exports = async (req, res) => {
   try {
-    const { fromCache, page } = await getPage(['1', 'true'].includes(req.query.nocache));
+    const page = await getPage();
     const $ = cheerio.load(page);
 
     return res.json({
       data: {
-        from_cache: fromCache,
         bank_notes: parseSection($, '#dnn_ctr3509_BNIValasInfoView_divSpecial'),
         counter: parseSection($, '#dnn_ctr3509_BNIValasInfoView_divBankNotes'),
       },
