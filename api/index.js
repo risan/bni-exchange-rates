@@ -3,7 +3,7 @@ const { join } = require('path');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const CACHE_PAGE = join(__dirname, '../cache/page.html');
+const CACHE_PAGE = join(__dirname, 'cache', 'page.html');
 
 const getPage = async (clearCache = false) => {
   if (!clearCache && existsSync(CACHE_PAGE)) {
