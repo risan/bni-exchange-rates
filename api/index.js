@@ -1,14 +1,15 @@
-const fs = require('fs');
+const { existsSync, readFileSync, writeFileSync } = require('fs');
+const { join } = require('path');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const CACHE_PAGE = 'cache/page.html';
+const CACHE_PAGE = join(__dirname, '../cache/page.html');
 
 const getPage = async (clearCache = false) => {
-  if (!clearCache && fs.existsSync(CACHE_PAGE)) {
+  if (!clearCache && existsSync(CACHE_PAGE)) {
     return {
       fromCache: true,
-      page: fs.readFileSync(CACHE_PAGE),
+      page: readFileSync(CACHE_PAGE),
     };
   }
 
@@ -23,7 +24,7 @@ const getPage = async (clearCache = false) => {
     },
   });
 
-  fs.writeFileSync(CACHE_PAGE, response.data);
+  writeFileSync(CACHE_PAGE, response.data);
 
   return {
     fromCache: false,
