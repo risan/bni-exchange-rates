@@ -33,13 +33,13 @@ const parseSection = ($, id) => {
 
   const dateInfo = $(`${id} .date-infoView span`).text();
 
-  const matches = dateInfo.match(/(\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}).+([+-]\d{2}:\d{2})/);
+  const m = dateInfo.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}:\d{2}:\d{2}).+([+-]\d{2}:\d{2})/);
 
-  if (matches === null) {
+  if (m === null) {
     return { items };
   }
 
-  const date = new Date(`${matches[1]} ${matches[2]}`);
+  const date = new Date(`${m[3]}-${m[2]}-${m[1]} ${m[4]}${m[5]}`);
 
   return { last_update: date.toISOString(), idr_rate: items };
 };
